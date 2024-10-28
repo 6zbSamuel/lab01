@@ -38,7 +38,7 @@ const productDisplay = {
     },
     setup(props, { emit }) {
         const shippingCost = computed(() => {
-            return props.premium? 'Free' : 5;
+            return props.premium? 'Free' : 666;
         });
         const productName = ref('Boots');
         const brandName = ref('SE 331');
@@ -52,7 +52,7 @@ const productDisplay = {
         ]);
         const variantList = ref([
             { id: 2234, color: 'green', image: './assets/images/socks_green.jpg', quantity: 50, sizes:'S'},
-            { id: 2235, color: 'blue', image: './assets/images/socks_blue.jpg', quantity: 0, sizes:'M'},
+            { id: 2235, color: 'blue', image: './assets/images/socks_blue.jpg', quantity: 0, sizes:'L'},
         ]);
         const selectedVariant = ref(0);
         const cart = ref(0);
