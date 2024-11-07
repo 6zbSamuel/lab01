@@ -1,16 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import EventListView from '@/views/EventListView.vue'
+import PassengerView from '@/views/PassengerView.vue'
 import AboutView from '@/views/AboutView.vue'
-import EventDetailView from '@/views/event/DetailView.vue'
-import EventRegisterView from '@/views/event/RegisterView.vue'
-import EventEditView from '@/views/event/EditView.vue'
-import EventLayoutView from '@/views/event/LayoutView.vue'
+import PassengerDetailView from '@/views/passenger/DetailView.vue'
+import PassengerRegisterView from '@/views/passenger/RegisterView.vue'
+import PassengerEditView from '@/views/passenger/EditView.vue'
+import PassengerLayoutView from '@/views/passenger/LayoutView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import NetworkErrorView from '@/views/NetworkErrorView.vue'
+import AirlineView from '@/views/passenger/AirlineView.vue'
 import nProgress from 'nprogress'
-import EventService from '@/services/EventService'
-import {useEventStore} from '@/stores/event'
-import StudentListView from '@/components/StudentListView.vue'
+import PassengerServices from '@/services/PassengerServices'
+import { useEventStore } from '@/stores/event'
 
 
 const router = createRouter({
@@ -18,84 +18,82 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'event-list-view',
-      component: EventListView,
-      props: (route) => ({ page: parseInt(route.query.page?.toString() || '1') })      
+      name: 'passenger',
+      component: PassengerView,
+      props: route => ({ page: parseInt(route.query.page?.toString() || '1') }),
     },
     {
-      path: '/event/:id',
-      name: 'event-layout-view',
-      component: EventLayoutView,
+      path: '/passenger/:id',
+      name: 'passenger-layout-view',
+      component: PassengerLayoutView,
       props: true,
       beforeEnter: (to) => {
-          const id = parseInt(to.params.id as string)
-          const eventStore = useEventStore()
-          return EventService.getEvent(id)
-            .then((response) => {
-              // need to setup the data for the event
-              eventStore.setEvent(response.data)
-            })
-            .catch((error) => {
-              if (error.response && error.response.status === 404) {
-                return {
-                  name: '404-resource-view',
-                  params: { resource: 'event' }
-                }
-              } else {
-                return { name: 'network-error-view' }
+        const id = (to.params.id as string)
+        const eventStore = useEventStore()
+        return PassengerServices.getPassenger(id)
+          .then((response) => {
+            // need to setup the data for the event
+            eventStore.setEvent(response.data)
+          })
+          .catch((error) => {
+            if (error.response && error.response.status === 404) {
+              return {
+                name: '404-resource-view',
+                params: { resource: 'event' }
               }
-            })
-        },
-        
-        
+            } else {
+              return { name: 'network-error-view' }
+            }
+          })
+      },
       children: [
         {
           path: '',
-          name: 'event-detail-view',
-          component: EventDetailView,
-          props: true
+          name: 'passenger-detail-view',
+          component: PassengerDetailView,
+          props: true,
+        },
+        {
+          path: 'airline/:airlineId',
+          name: 'airline-detail-view',
+          component: AirlineView,
+          props: true,
         },
         {
           path: 'register',
-          name: 'event-register-view',
-          component: EventRegisterView,
-          props: true
+          name: 'passenger-register-view',
+          component: PassengerRegisterView,
+          props: true,
         },
         {
           path: 'edit',
-          name: 'event-edit-view',
-          component: EventEditView,
-          props: true
-        }
-      ]          
-    },          
+          name: 'passenger-edit-view',
+          component: PassengerEditView,
+          props: true,
+        },
+      ],
+    },
     {
       path: '/about',
-      name: 'about',          
-      component: AboutView
+      name: 'about',
+      component: AboutView,
     },
     {
       path: '/404/:resource',
       name: '404-resource-view',
       component: NotFoundView,
-      props: true
-    },
-    {
-      path: '/students',
-      name:'students',
-      component:StudentListView
-    },      
-    {
-      path: '/:catchAll(.*)',
-      name: 'not-found',
-      component: NotFoundView
+      props: true,
     },
     {
       path: '/network-error',
       name: 'network-error-view',
-      component: NetworkErrorView
+      component: NetworkErrorView,
     },
-          
+    {
+      path: '/:catchAll(.*)',
+      name: 'not-found',
+      component: NotFoundView,
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
@@ -103,17 +101,13 @@ const router = createRouter({
     } else {
       return { top: 0 }
     }
-    
   }
-    
 })
 router.beforeEach(() => {
-    nProgress.start()
-  })
-  
+ nProgress.start()
+})
 router.afterEach(() => {
-    nProgress.done()
-  })
-  
+ nProgress.done()
+})
 
 export default router
